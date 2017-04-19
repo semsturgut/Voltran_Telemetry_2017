@@ -12,6 +12,7 @@ import os
 # Restart atildiginda usb portlarini otomatik gorup tekrar baslatilmasi yapilacak. ttyS0 a gore tekrar duzenlenecek
 # Modullerin akim degerleri deger asimi var mi diye kontrol edilecek.
 # Edit.
+# Canim edit.
 # GPIO Pinleri belirleniyor.
 lcd_rs = 18
 lcd_en = 23
