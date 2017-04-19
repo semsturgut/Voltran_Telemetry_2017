@@ -11,10 +11,9 @@ import os
 # XBee ile verilerin pite gonderilmesi yapilacak. ttyS0 a gore tekrar duzenlenecek
 # Restart atildiginda usb portlarini otomatik gorup tekrar baslatilmasi yapilacak. ttyS0 a gore tekrar duzenlenecek
 # Modullerin akim degerleri deger asimi var mi diye kontrol edilecek.
-# Edit.
-# Canim edit.
+
 # GPIO Pinleri belirleniyor.
-'''lcd_rs = 18
+lcd_rs = 18
 lcd_en = 23
 lcd_d4 = 12
 lcd_d5 = 16
@@ -22,7 +21,7 @@ lcd_d6 = 20
 lcd_d7 = 21
 lcd_bl = 4
 lcd_cols = 20
-lcd_rows = 4'''
+lcd_rows = 4
 
 # BMS degiskenleri belirleniyor.
 htemp_bms = ''
