@@ -49,10 +49,11 @@ GPIO.setmode(GPIO.BCM)  # Use the Broadcom method for naming the GPIO pins
 GPIO.setup(buzzer_pin, GPIO.OUT)  # Set pin 18 as an output pin
 
 
-# USB Portlar acik mi diye test ediliyor
+# USB Portlar acik mi diye test ediliyor @@@@@@ Ekrani test et... @@@@@
 def portCheck():
-    '''sleep(0.5)
-    if os.path.exists('/dev/ttyUSB0'):
+    sleep(0.5)
+    '''
+    if os.path.exists('/dev/ttyUSB0') and os.path.exists('/dev/ttyS0'):
         print 'USB ports are OK.'
         lcd.clear()
         lcd.set_cursor(0, 1)
@@ -63,13 +64,20 @@ def portCheck():
         print 'Please check USB ports.'
         lcd.clear()
         lcd.set_cursor(0, 0)
-        lcd.message('Lutfen USB yi takin')
+        lcd.message('Check connections')
 
         lcd.set_cursor(0, 1)
         lcd.message('BMS:')
         if os.path.exists('/dev/ttyUSB0'):
             lcd.set_cursor(6, 0)
             lcd.message(' OK')
+
+        lcd.set_cursor(0, 2)
+        lcd.message('Xbee:')
+        if os.path.exists('/dev/ttyS0'):
+            lcd.set_cursor(7, 2)
+            lcd.message(' OK')
+
         portCheck()
 
     ser_bms = serial.Serial(
@@ -78,69 +86,79 @@ def portCheck():
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
         bytesize=serial.EIGHTBITS,
-        timeout=0.5)'''
+        timeout=0.5)
+    '''
+    ser_xbee = serial.Serial(
+        port='/dev/ttyS0',
+        baudrate=9600,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        bytesize=serial.EIGHTBITS,
+        timeout=0.5)
+
     sleep(1)
     lcd.clear()
-    # main(ser_bms)
-    main()
+    main(ser_xbee)
+    # main()
 
 
 # Ana fonksiyon.def main(ser_bms)
-def main():
+def main(ser_xbee):
     #    print 'Successfully connected to:' + ser_bms.portstr
     while True:
-        sleep(.3)
+        sleep(1)
         print strftime("Date :%Y-%m-%d Time :%H:%M:%S", gmtime())
         log = []
         line = []
         # BMS den gelen veriler parse ediliyor.
-        '''        if ser_bms.isOpen():
-                    while True:
-                        try:
-                            line = ser_bms.readline().split(',')
-                            if ':' not in line[0]:
-                                if line[0] == 'BT3':
-                                    htemp_bms = str(
-                                        (int(line[3], 16) + (-100)) * 1)
-                                    atemp_bms = str(
-                                        (int(line[4], 16) + (-100)) * 1)
-                                if line[0] == 'CV1':
-                                    hvolt_bms = str(
-                                        int(line[1], 16) * 1 / 100)
-                                    cur_bms = str(
-                                        int(line[2], 16) * 1 / 10
-                                    )
-                                if line[0] == 'BC1':
-                                    batper_bms = str(
-                                        int(line[3], 16) / 100)
-                                    line = []
-                                    break
-                            else:
-                                if line[2] == 'BT3':
-                                    htemp_bms = str(
-                                        (int(line[3], 16) + (-100)) * 1)
-                                    atemp_bms = str(
-                                        (int(line[4], 16) + (-100)) * 1)
-                                if line[2] == 'CV1':
-                                    hvolt_bms = str(
-                                        int(line[3], 16) * 1 / 100)
-                                    cur_bms = str(int(line[4], 16) / 10)
-                                if line[2] == 'BC1':
-                                    batper_bms = str(
-                                        int(line[5], 16) / 100)
-                                    line = []
-                                    break
-                        except (IndexError, ValueError) as e:
-                            print e
-                            htemp_bms = '0'
-                            atemp_bms = '0'
-                            cur_bms = '0'
-                            hvolt_bms = '0'
-                            batper_bms = '0'
+        '''
+        if ser_bms.isOpen():
+            while True:
+                try:
+                    line = ser_bms.readline().split(',')
+                    if ':' not in line[0]:
+                        if line[0] == 'BT3':
+                            htemp_bms = str(
+                                (int(line[3], 16) + (-100)) * 1)
+                            atemp_bms = str(
+                                (int(line[4], 16) + (-100)) * 1)
+                        if line[0] == 'CV1':
+                            hvolt_bms = str(
+                                int(line[1], 16) * 1 / 100)
+                            cur_bms = str(
+                                int(line[2], 16) * 1 / 10
+                            )
+                        if line[0] == 'BC1':
+                            batper_bms = str(
+                                int(line[3], 16) / 100)
+                            line = []
+                            break
+                    else:
+                        if line[2] == 'BT3':
+                            htemp_bms = str(
+                                (int(line[3], 16) + (-100)) * 1)
+                            atemp_bms = str(
+                                (int(line[4], 16) + (-100)) * 1)
+                        if line[2] == 'CV1':
+                            hvolt_bms = str(
+                                int(line[3], 16) * 1 / 100)
+                            cur_bms = str(int(line[4], 16) / 10)
+                        if line[2] == 'BC1':
+                            batper_bms = str(
+                                int(line[5], 16) / 100)
+                            line = []
+                            break
+                except (IndexError, ValueError) as e:
+                    print e
+                    htemp_bms = '0'
+                    atemp_bms = '0'
+                    cur_bms = '0'
+                    hvolt_bms = '0'
+                    batper_bms = '0'
 
-                else:
-                    print 'BMS|USB0:Handling data problem. Please check connections.'
-                    '''
+        else:
+            print 'BMS|USB0:Handling data problem. Please check connections.'
+        '''
         htemp_bms = '0'
         atemp_bms = '0'
         cur_bms = '0'
@@ -197,31 +215,33 @@ def main():
             lcd.message('Battery:')
             lcd.set_cursor(8, 3)
             lcd.message('%' + str(batper_bms))
-            '''
-                    # Parse edilen veriler Xbee ile pit'e gonderiliyor.
-                    if ser_xbee.isOpen():
-                        if str(speed_eng) != '':
-                            print('Speed :' + str(speed_eng) + 'KM/H | CTemp :' +
-                                  str(cotemp_eng) + 'C | BTemp :' +
-                                  str(battemp_eng_str) + 'C | Battery:' +
-                                  str(batper_bms) + '%'
-                                  )
 
-                            print('#' + ',' + str(battemp_eng_str) + ',' +
-                                  str(cotemp_eng) + ',' +
-                                  str(cur_bms) + ',' + str(hvolt_bms) + ',' +
-                                  str(speed_eng) + ',' +
-                                  str(batper_bms) + ',' + '?')
+        # Parse edilen veriler Xbee ile pit'e gonderiliyor.
+        if ser_xbee.isOpen():
+            if str(speed_eng) != '':
+                print('Speed :' + str(speed_eng) + 'KM/H | CTemp :' +
+                      str(cotemp_eng) + 'C | BTemp :' +
+                      str(battemp_eng_str) + 'C | Battery:' +
+                      str(batper_bms) + '%'
+                      )
 
-                            ser_xbee.writelines('#' + ',' + str(battemp_eng_str) + ',' +
-                                                str(cotemp_eng) + ',' +
-                                                str(cur_bms) + ',' + str(hvolt_bms) + ',' +
-                                                str(speed_eng) + ',' +
-                                                str(batper_bms) + ',' + '?')
-                    else:
-                        print 'XBee|Comm:Sending data problem. Please check connections.'
-            '''
-'''
+                print('Telemetry Data: #' + ',' +
+                      str(battemp_eng_str) + ',' +
+                      str(cotemp_eng) + ',' +
+                      str(cur_bms) + ',' + str(hvolt_bms) + ',' +
+                      str(speed_eng) + ',' +
+                      str(batper_bms) + ',' + '?' + '\n')
+
+                ser_xbee.writelines('#' + ',' + str(battemp_eng_str) + ',' +
+                                    str(cotemp_eng) + ',' +
+                                    str(cur_bms) + ',' + str(hvolt_bms) + ',' +
+                                    str(speed_eng) + ',' +
+                                    str(batper_bms) + ',' + '?')
+            else:
+                print 'XBee|Comm:Sending data problem. Please check connections.'
+
+        # Telemtri sisteminin log kaydi tutuluyor.
+        '''
         with open('/home/pi/TELEMETRY_LOG.txt', 'a') as file:
             file.write(
                 strftime("Date :%Y-%m-%d Time :%H:%M:%S", gmtime()) + '\n')
@@ -231,39 +251,7 @@ def main():
             file.write('speed_eng :' + speed_eng + 'battemp_eng_str :' +
                        battemp_eng_str + 'cotemp_eng' + cotemp_eng + '\n')
             file.close()
-'''
-
-
-def splash():
-    lcd.clear()
-    while True:
-        lcd.set_cursor(0, 3)
-        lcd.message("USB'leri cikariniz.")
-        lcd.set_cursor(0, 0)
-        lcd.message('USB0 :')
-        if not os.path.exists('/dev/ttyUSB0'):
-            lcd.set_cursor(6, 0)
-            lcd.message(' OK')
-
-        lcd.set_cursor(0, 1)
-        lcd.message('USB1 :')
-        if not os.path.exists('/dev/ttyUSB1'):
-            lcd.set_cursor(6, 1)
-            lcd.message(' OK')
-
-        lcd.set_cursor(0, 2)
-        lcd.message('USB2 :')
-        if not os.path.exists('/dev/ttyUSB2'):
-            lcd.set_cursor(6, 2)
-            lcd.message(' OK')
-
-        if not os.path.exists('/dev/ttyUSB0'):
-            if not os.path.exists('/dev/ttyUSB1'):
-                if not os.path.exists('/dev/ttyUSB2'):
-                    sleep(.3)
-                    break
-
-        sleep(0.2)
+        '''
 
     lcd.clear()
     lcd.set_cursor(0, 0)
@@ -289,7 +277,6 @@ def splash():
 
 
 try:
-    splash()
     portCheck()
 except KeyboardInterrupt:
     print 'Interrupted. LCD is clear now.'
