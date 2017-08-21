@@ -30,7 +30,7 @@ cur_bms = ''
 hvolt_bms = ''
 batper_bms = ''
 
-# Arduino dan gelen degiskenler belirleniyor.
+# Sensorlerden gelen degiskenler belirleniyor.
 BMP085_sensor = BMP085.BMP085()
 speed_eng = ''
 battemp_eng = 0
